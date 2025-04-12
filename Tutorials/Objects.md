@@ -11,8 +11,8 @@
 # Getting started with a basic deployment to a kubernetes cluster:
 ## Prerequisites:
 * Docker installed
-* Minikube installed
-* Kubectl installed
+* Minikube installed - minikube is a tool that creates a local Kubernetes cluster on your machine. It is a great way to get started with Kubernetes and test your applications locally.
+* Kubectl installed - kubectl is the command-line tool for interacting with Kubernetes clusters. It allows you to create, update, and delete resources in your cluster. 
 
 - first we obviously need to build the image:
 ```bash
@@ -26,7 +26,7 @@ minikube status
 ```bash
 minikube start --driver=docker     
 ```
-- Create a deployment object with kubectl(it should connect automatically to the minikube cluster):
+## Create a deployment object with kubectl(it should connect automatically to the minikube cluster):
 * First Push the image to Docker hub first (the minikube cluster will not be able to access the local docker image):
 ```bash
 docker tag kube-first-app ozalboher/kube-first-app
@@ -49,4 +49,4 @@ kubectl get pods
 minikube dashboard
 ```
 * On the browser, you can now see the control panel of the kubernetes cluster.
-* The control panel is essentially acting as the Master node of the cluster. Which is suppose to analyze the running pod and find the best working node for it. A worker node as we learned is containing the pod and the container and kubelet is in charge to manage the worker node (the pod and the container).
+* The control panel is essentially acting as the Master node of the cluster. Which is suppose to analyze the running pod and find the best working node for it. A worker node as we learned is containing the pod and the container and kubelet is in charge to manage the worker node (the pod and the container). kubelet is the agent that runs on each worker node and communicates with the master node to ensure that the desired state of the application is maintained.(it is done automatically by the kubernetes cluster).
