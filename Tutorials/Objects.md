@@ -50,3 +50,52 @@ minikube dashboard
 ```
 * On the browser, you can now see the control panel of the kubernetes cluster.
 * The control panel is essentially acting as the Master node of the cluster. Which is suppose to analyze the running pod and find the best working node for it. A worker node as we learned is containing the pod and the container and kubelet is in charge to manage the worker node (the pod and the container). kubelet is the agent that runs on each worker node and communicates with the master node to ensure that the desired state of the application is maintained.(it is done automatically by the kubernetes cluster).
+
+# Exposing a pod created by a deployment object:
+- To expose the pod created by the deployment object, we can use the kubectl expose command. This command creates a service object that exposes the pod to the outside world.
+```bash
+kubectl expose deployment first-app --type=LoadBalancer --port=8080
+```
+- Check the service object:
+```bash
+kubectl get service
+```
+- The external IP address of the service will be displayed in the output. This is the address that can be used to access the application running in the pod.
+- When you see <pending> in the external IP address, it does not mean it is still being created like we would think, because the minikube cluster is not a real cluster (it is a VM) and does not have a load balancer. Instead, it means that the service is not accessible from outside the cluster. To access the service, we can use the minikube service command.
+- To view the app running on the cluster, we can use the minikube service command. This command opens a browser window with the URL of the service.
+```bash
+minikube service first-app
+```
+- The Service object is a stable endpoint that can be used to access the application running in the pod. It provides a way to access the application without having to know the IP address of the pod. The Service object also provides load balancing and service discovery for the application.
+- You can use the scale command to scale the deployment object. This command changes the number of replicas of the deployment object. The number of replicas is the number of pods that will be created by the deployment object.
+```bash
+kubectl scale deployment first-app --replicas=3
+```
+* This is useful for scaling the application up or down based on the load(if there is no autoscaling or loadbalancer). The deployment object will automatically create or delete pods to match the desired number of replicas.
+
+- To update the deployment object, we can use the kubectl set image command. This command updates the image of the deployment object. The new image will be used to create new pods.
+* Make sure to locally build the new image(and give it a new tag - if not the kubectl will not consider it as new, and wont update the pod) and push it to docker hub before running this command.
+```bash
+kubectl set image deployment/first-app ozalboher/kube-first-app:latest
+```
+* You can also use the rollout command to see the status of progress of the deployment object. This command shows the status of the deployment object and the pods that are created by it.
+```bash
+kubectl rollout status deployment/first-app
+```
+* incase of a typo in the name of the image or an unsuccessful build, you can use the kubectl rollout undo command to rollback the deployment object to the previous version. This command will create new pods with the previous image.
+```bash
+kubectl rollout undo deployment/first-app
+```
+* You can also rollout to a prior version by specifying the revision number. The revision number is the number of the version that you want to rollback to.
+```bash
+kubectl rollout undo deployment/first-app --to-revision=1
+```
+## Cleaning things up:
+- To delete the deployment object, we can use the kubectl delete command. This command deletes the deployment object and all the pods that are created by it.
+```bash
+kubectl delete deployment first-app
+```
+- To delete the service object, we can use the kubectl delete command. This command deletes the service object and all the pods that are created by it.
+```bash
+kubectl delete service first-app
+```
